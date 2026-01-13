@@ -8,7 +8,7 @@ import { db } from "../../../server/db";
 
 // src/app/api/admin/stats/route.ts
 // GET /api/admin/stats
-export async function GET_ADMIN_STATS(request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     const session = await getSession();
     if (!session || session.user.role !== "ADMIN") {
