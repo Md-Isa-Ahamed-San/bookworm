@@ -1,6 +1,3 @@
-This is the updated, professional `README.md` for your project, now including the dedicated **API Architecture** section with the directory tree.
-
----
 
 # 📚 BookWorm
 
