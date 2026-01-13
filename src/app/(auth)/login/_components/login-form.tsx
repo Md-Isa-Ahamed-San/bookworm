@@ -1,59 +1,56 @@
-// ==========================================
-// 📁 src/app/(auth)/login/_components/login-form.tsx
-// ==========================================
 "use client";
 
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+
 import { signInAction } from "../../../actions/auth";
 import { LoginCard } from "./login-card";
+import { loginSchema, type LoginFormData } from "../../../../lib/zod_schema";
+
 
 export function LoginForm() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleSubmit = async (formData: FormData) => {
-    // Clear previous errors
-    setErrors({});
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-    // Client-side validation
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-
-    if (!email || !password) {
-      toast.error("Please fill in all fields");
-      return;
-    }
-
-    // Start transition for better UX
+  const onSubmit = async (data: LoginFormData) => {
     startTransition(async () => {
       try {
+        // Create FormData for server action
+        const formData = new FormData();
+        formData.append("email", data.email);
+        formData.append("password", data.password);
+
         await signInAction(formData);
         toast.success("Login successful! Redirecting...");
         router.push("/");
       } catch (error) {
-        // Handle specific error types
         const errorMessage =
           error instanceof Error ? error.message : "Login failed";
-
-        if (errorMessage.includes("email")) {
-          setErrors({ email: errorMessage });
-        } else if (errorMessage.includes("password")) {
-          setErrors({ password: errorMessage });
-        } else {
-          toast.error(errorMessage);
-        }
+        toast.error(errorMessage);
       }
     });
   };
 
   return (
     <LoginCard
-      handleSubmit={handleSubmit}
+      handleSubmit={handleSubmit(onSubmit)}
       isPending={isPending}
+      register={register}
       errors={errors}
     />
   );

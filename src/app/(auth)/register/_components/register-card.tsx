@@ -1,6 +1,3 @@
-// ==========================================
-// 📁 src/app/(auth)/register/_components/register-card.tsx
-// ==========================================
 "use client";
 
 import {
@@ -17,22 +14,28 @@ import { Button } from "~/components/ui/button";
 import Link from "next/link";
 import { BookOpen, Loader2, Mail, Lock, User } from "lucide-react";
 import { ImageUpload } from "./image-upload";
+import type { FieldErrors, UseFormRegister, UseFormSetValue } from "react-hook-form";
+import type { RegisterFormData } from "../../../../lib/zod_schema";
 
 
 interface RegisterCardProps {
-  handleSubmit: (formData: FormData) => Promise<void>;
+  handleSubmit: () => void;
   isPending: boolean;
-  errors: Record<string, string>;
+  register: UseFormRegister<RegisterFormData>;
+  errors: FieldErrors<RegisterFormData>;
   imageUrl: string;
   setImageUrl: (url: string) => void;
+  setValue: UseFormSetValue<RegisterFormData>;
 }
 
 export function RegisterCard({
   handleSubmit,
   isPending,
+  register,
   errors,
   imageUrl,
   setImageUrl,
+  setValue,
 }: RegisterCardProps) {
   return (
     <Card className="border-border bg-card shadow-lg">
@@ -56,12 +59,12 @@ export function RegisterCard({
       </CardHeader>
 
       {/* Form */}
-      <form action={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           {/* Name Field */}
           <div className="space-y-2">
-            <Label 
-              htmlFor="name" 
+            <Label
+              htmlFor="name"
               className="font-poppins font-bold text-card-foreground"
             >
               Full Name
@@ -70,32 +73,27 @@ export function RegisterCard({
               <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="name"
-                name="name"
                 type="text"
                 placeholder="John Doe"
-                required
                 disabled={isPending}
                 autoComplete="name"
                 className="border-border bg-input pl-10 text-base text-foreground focus-visible:ring-ring"
                 aria-invalid={!!errors.name}
                 aria-describedby={errors.name ? "name-error" : undefined}
+                {...register("name")}
               />
             </div>
             {errors.name && (
-              <p 
-                id="name-error" 
-                className="text-sm text-destructive"
-                role="alert"
-              >
-                {errors.name}
+              <p id="name-error" className="text-sm text-destructive" role="alert">
+                {errors.name.message}
               </p>
             )}
           </div>
 
           {/* Email Field */}
           <div className="space-y-2">
-            <Label 
-              htmlFor="email" 
+            <Label
+              htmlFor="email"
               className="font-poppins font-bold text-card-foreground"
             >
               Email
@@ -104,32 +102,27 @@ export function RegisterCard({
               <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="email"
-                name="email"
                 type="email"
                 placeholder="your.email@example.com"
-                required
                 disabled={isPending}
                 autoComplete="email"
                 className="border-border bg-input pl-10 text-base text-foreground focus-visible:ring-ring"
                 aria-invalid={!!errors.email}
                 aria-describedby={errors.email ? "email-error" : undefined}
+                {...register("email")}
               />
             </div>
             {errors.email && (
-              <p 
-                id="email-error" 
-                className="text-sm text-destructive"
-                role="alert"
-              >
-                {errors.email}
+              <p id="email-error" className="text-sm text-destructive" role="alert">
+                {errors.email.message}
               </p>
             )}
           </div>
 
           {/* Password Field */}
           <div className="space-y-2">
-            <Label 
-              htmlFor="password" 
+            <Label
+              htmlFor="password"
               className="font-poppins font-bold text-card-foreground"
             >
               Password
@@ -138,27 +131,26 @@ export function RegisterCard({
               <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="password"
-                name="password"
                 type="password"
                 placeholder="••••••••"
-                required
                 disabled={isPending}
                 autoComplete="new-password"
                 className="border-border bg-input pl-10 text-base text-foreground focus-visible:ring-ring"
                 aria-invalid={!!errors.password}
                 aria-describedby={errors.password ? "password-error" : undefined}
+                {...register("password")}
               />
             </div>
             <p className="text-xs text-muted-foreground">
               At least 6 characters
             </p>
             {errors.password && (
-              <p 
-                id="password-error" 
+              <p
+                id="password-error"
                 className="text-sm text-destructive"
                 role="alert"
               >
-                {errors.password}
+                {errors.password.message}
               </p>
             )}
           </div>
@@ -169,16 +161,17 @@ export function RegisterCard({
               Profile Photo <span className="text-destructive">*</span>
             </Label>
             <ImageUpload
-              onUploadComplete={setImageUrl} 
+              onUploadComplete={(file) => {
+                setValue("image", file);
+                // Create preview URL
+                const url = URL.createObjectURL(file);
+                setImageUrl(url);
+              }}
               disabled={isPending}
             />
             {errors.image && (
-              <p 
-                id="image-error" 
-                className="text-sm text-destructive"
-                role="alert"
-              >
-                {errors.image}
+              <p id="image-error" className="text-sm text-destructive" role="alert">
+                {errors.image.message}
               </p>
             )}
           </div>

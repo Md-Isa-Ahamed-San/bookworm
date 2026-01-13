@@ -1,6 +1,3 @@
-// ==========================================
-// 📁 src/app/(auth)/register/_components/image-upload.tsx
-// ==========================================
 "use client";
 
 import { useState, useRef } from "react";
@@ -10,7 +7,7 @@ import { toast } from "sonner";
 import Image from "next/image";
 
 interface ImageUploadProps {
-  onUploadComplete: (url: string) => void;
+  onUploadComplete: (file: File) => void; // ← Changed from string to File
   disabled?: boolean;
 }
 
@@ -18,7 +15,6 @@ export function ImageUpload({ onUploadComplete, disabled }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const uploadAbortController = useRef<AbortController | null>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -36,54 +32,21 @@ export function ImageUpload({ onUploadComplete, disabled }: ImageUploadProps) {
       return;
     }
 
-    setUploading(true);
-
-    // Create abort controller for timeout
-    uploadAbortController.current = new AbortController();
-    const timeoutId = setTimeout(() => {
-      uploadAbortController.current?.abort();
-    }, 30000); // 30 second timeout
-
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("folder", "profiles");
-
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-        signal: uploadAbortController.current.signal,
-      });
-    //   console.log("🚀 ~ handleFileChange ~ response:", response)
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error("Upload failed");
-      }
-
-      const data = await response.json() as { url: string };
-      setPreviewUrl(data.url);
-      onUploadComplete(data.url);
-      toast.success("Image uploaded successfully!");
-    } catch (error) {
-      clearTimeout(timeoutId);
-      
-      if (error instanceof Error && error.name === "AbortError") {
-        toast.error("Upload timed out. Please try again.");
-      } else {
-        console.error("Upload error:", error);
-        toast.error("Failed to upload image. Please try again.");
-      }
-    } finally {
-      setUploading(false);
-      uploadAbortController.current = null;
-    }
+    // Create preview immediately (no upload yet)
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+    
+    // Pass the File object back to parent
+    onUploadComplete(file);
+    toast.success("Image selected!");
   };
 
   const handleRemove = () => {
+    // Revoke the object URL to free memory
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
     setPreviewUrl("");
-    onUploadComplete("");
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -94,7 +57,6 @@ export function ImageUpload({ onUploadComplete, disabled }: ImageUploadProps) {
       <input
         ref={fileInputRef}
         type="file"
-        name="image"
         accept="image/*"
         onChange={handleFileChange}
         className="hidden"
@@ -124,7 +86,7 @@ export function ImageUpload({ onUploadComplete, disabled }: ImageUploadProps) {
               {uploading ? (
                 <>
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                  <p className="text-sm text-muted-foreground">Uploading...</p>
+                  <p className="text-sm text-muted-foreground">Processing...</p>
                 </>
               ) : (
                 <>
@@ -136,7 +98,7 @@ export function ImageUpload({ onUploadComplete, disabled }: ImageUploadProps) {
                       Click to upload profile photo
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      PNG, JPG up to 5MB
+                      PNG, JPG, WebP up to 5MB
                     </p>
                   </div>
                 </>
@@ -159,9 +121,9 @@ export function ImageUpload({ onUploadComplete, disabled }: ImageUploadProps) {
               </div>
               <div className="flex-1">
                 <p className="text-sm font-medium text-card-foreground">
-                  Profile photo uploaded
+                  Profile photo selected
                 </p>
-                <p className="text-xs text-muted-foreground">Ready to use</p>
+                <p className="text-xs text-muted-foreground">Ready to upload</p>
               </div>
               <Button
                 type="button"
@@ -170,7 +132,7 @@ export function ImageUpload({ onUploadComplete, disabled }: ImageUploadProps) {
                 onClick={handleRemove}
                 disabled={disabled}
                 className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                aria-label="Remove uploaded photo"
+                aria-label="Remove selected photo"
               >
                 <X className="h-4 w-4" />
               </Button>

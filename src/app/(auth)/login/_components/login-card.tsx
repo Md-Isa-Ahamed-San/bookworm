@@ -1,6 +1,3 @@
-// ==========================================
-// 📁 src/app/(auth)/login/_components/login-card.tsx
-// ==========================================
 "use client";
 
 import {
@@ -16,14 +13,23 @@ import { Label } from "~/components/ui/label";
 import { Button } from "~/components/ui/button";
 import Link from "next/link";
 import { BookOpen, Loader2, Mail, Lock } from "lucide-react";
+import type { LoginFormData } from "../../../../lib/zod_schema";
+import type { FieldErrors, UseFormRegister } from "react-hook-form";
+
 
 interface LoginCardProps {
-  handleSubmit: (formData: FormData) => Promise<void>;
+  handleSubmit: () => void;
   isPending: boolean;
-  errors: Record<string, string>;
+  register: UseFormRegister<LoginFormData>;
+  errors: FieldErrors<LoginFormData>;
 }
 
-export function LoginCard({ handleSubmit, isPending, errors }: LoginCardProps) {
+export function LoginCard({
+  handleSubmit,
+  isPending,
+  register,
+  errors,
+}: LoginCardProps) {
   return (
     <Card className="border-border bg-card shadow-lg">
       <CardHeader className="space-y-1">
@@ -46,12 +52,12 @@ export function LoginCard({ handleSubmit, isPending, errors }: LoginCardProps) {
       </CardHeader>
 
       {/* Form */}
-      <form action={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           {/* Email Field */}
           <div className="space-y-2">
-            <Label 
-              htmlFor="email" 
+            <Label
+              htmlFor="email"
               className="font-poppins font-bold text-card-foreground"
             >
               Email
@@ -60,32 +66,27 @@ export function LoginCard({ handleSubmit, isPending, errors }: LoginCardProps) {
               <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="email"
-                name="email"
                 type="email"
                 placeholder="your.email@example.com"
-                required
                 disabled={isPending}
                 autoComplete="email"
                 className="border-border bg-input pl-10 text-base text-foreground focus-visible:ring-ring"
                 aria-invalid={!!errors.email}
                 aria-describedby={errors.email ? "email-error" : undefined}
+                {...register("email")}
               />
             </div>
             {errors.email && (
-              <p 
-                id="email-error" 
-                className="text-sm text-destructive"
-                role="alert"
-              >
-                {errors.email}
+              <p id="email-error" className="text-sm text-destructive" role="alert">
+                {errors.email.message}
               </p>
             )}
           </div>
 
           {/* Password Field */}
           <div className="space-y-2">
-            <Label 
-              htmlFor="password" 
+            <Label
+              htmlFor="password"
               className="font-poppins font-bold text-card-foreground"
             >
               Password
@@ -94,24 +95,23 @@ export function LoginCard({ handleSubmit, isPending, errors }: LoginCardProps) {
               <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="password"
-                name="password"
                 type="password"
                 placeholder="••••••••"
-                required
                 disabled={isPending}
                 autoComplete="current-password"
                 className="border-border bg-input pl-10 text-base text-foreground focus-visible:ring-ring"
                 aria-invalid={!!errors.password}
                 aria-describedby={errors.password ? "password-error" : undefined}
+                {...register("password")}
               />
             </div>
             {errors.password && (
-              <p 
-                id="password-error" 
+              <p
+                id="password-error"
                 className="text-sm text-destructive"
                 role="alert"
               >
-                {errors.password}
+                {errors.password.message}
               </p>
             )}
           </div>

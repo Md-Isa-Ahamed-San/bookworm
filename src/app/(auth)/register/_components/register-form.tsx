@@ -1,88 +1,65 @@
-// ==========================================
-// 📁 src/app/(auth)/register/_components/register-form.tsx
-// ==========================================
 "use client";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+
 import { signUpAction } from "../../../actions/auth";
 import { RegisterCard } from "./register-card";
+import { registerSchema, type RegisterFormData } from "../../../../lib/zod_schema";
+
 
 export function RegisterForm() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [errors, setErrors] = useState<Record<string, string>>({});
   const [imageUrl, setImageUrl] = useState<string>("");
 
-  const handleSubmit = async (formData: FormData) => {
-    // Clear previous errors
-    setErrors({});
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+  });
 
-    // Client-side validation
-    const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const imageFile = formData.get("image") as File;
-
-    const validationErrors: Record<string, string> = {};
-
-    if (!name || name.length < 1) {
-      validationErrors.name = "Name is required";
-    }
-    if (!email) {
-      validationErrors.email = "Email is required";
-    }
-    if (!password || password.length < 6) {
-      validationErrors.password = "Password must be at least 6 characters";
-    }
-    if (!imageFile || imageFile.size === 0) {
-      validationErrors.image = "Profile photo is required";
-    }
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      toast.error("Please fill in all required fields");
-      return;
-    }
-
-    // Start transition
+  const onSubmit = async (data: RegisterFormData) => {
     startTransition(async () => {
       try {
+        // Create FormData for server action
+        const formData = new FormData();
+        formData.append("name", data.name);
+        formData.append("email", data.email);
+        formData.append("password", data.password);
+        formData.append("image", data.image);
+
         await signUpAction(formData);
         toast.success("Account created successfully! Redirecting...");
         router.push("/");
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : "Registration failed";
-
-        // Parse error to specific field
-        if (errorMessage.includes("email")) {
-          setErrors({ email: errorMessage });
-        } else if (errorMessage.includes("password")) {
-          setErrors({ password: errorMessage });
-        } else if (errorMessage.includes("name")) {
-          setErrors({ name: errorMessage });
-        } else if (
-          errorMessage.includes("photo") ||
-          errorMessage.includes("image")
-        ) {
-          setErrors({ image: errorMessage });
-        } else {
-          toast.error(errorMessage);
-        }
+        toast.error(errorMessage);
       }
     });
   };
 
   return (
     <RegisterCard
-      handleSubmit={handleSubmit}
+      handleSubmit={handleSubmit(onSubmit)}
       isPending={isPending}
+      register={register}
       errors={errors}
       imageUrl={imageUrl}
       setImageUrl={setImageUrl}
+      setValue={setValue}
     />
   );
 }
