@@ -3,29 +3,26 @@
 // ==========================================
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard,
   BookText,
+  LayoutDashboard,
+  Menu,
+  MessageSquare,
+  ShieldCheck,
   Tags,
   Users,
-  MessageSquare,
   Video,
-  LogOut,
-  Menu,
-  ShieldCheck,
-  User as UserIcon,
 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { ModeToggle } from "~/components/mode-toggle";
 import { Button } from "~/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
-import { ModeToggle } from "~/components/mode-toggle";
-import { signOutAction } from "../../actions/auth";
-import type { Session } from "../../../server/better-auth/config";
+import { signOutAction } from "../../../actions/auth";
 import { SignOutButton } from "../../../components/sign-out-button";
-
+import type { Session } from "../../../server/better-auth/config";
 
 interface AdminMobileHeaderProps {
   session: Session;
@@ -49,12 +46,10 @@ export function AdminMobileHeader({ session }: AdminMobileHeaderProps) {
   };
 
   return (
-    <header className="flex h-16 items-center justify-between border-b border-border bg-background px-4 md:hidden">
+    <header className="border-border bg-background flex h-16 items-center justify-between border-b px-4 md:hidden">
       <div className="flex items-center gap-2">
-        <ShieldCheck className="h-5 w-5 text-primary" />
-        <span className="font-poppins font-bold text-primary">
-          Admin Panel
-        </span>
+        <ShieldCheck className="text-primary h-5 w-5" />
+        <span className="font-poppins text-primary font-bold">Admin Panel</span>
       </div>
 
       <div className="flex items-center gap-2">
@@ -68,7 +63,7 @@ export function AdminMobileHeader({ session }: AdminMobileHeaderProps) {
           <SheetContent side="right" className="w-80">
             <div className="flex flex-col gap-6">
               {/* User Info */}
-              <div className="flex items-center gap-3 border-b border-border pb-4">
+              <div className="border-border flex items-center gap-3 border-b pb-4">
                 {session.user.image ? (
                   <div className="relative h-12 w-12 overflow-hidden rounded-full">
                     <Image
@@ -80,13 +75,13 @@ export function AdminMobileHeader({ session }: AdminMobileHeaderProps) {
                     />
                   </div>
                 ) : (
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 font-bold text-primary">
+                  <div className="bg-primary/10 text-primary flex h-12 w-12 items-center justify-center rounded-full font-bold">
                     {session.user.name?.[0] || "A"}
                   </div>
                 )}
                 <div className="flex flex-col">
                   <p className="text-sm font-medium">{session.user.name}</p>
-                  <p className="text-xs text-muted-foreground">Administrator</p>
+                  <p className="text-muted-foreground text-xs">Administrator</p>
                 </div>
               </div>
 
@@ -99,14 +94,11 @@ export function AdminMobileHeader({ session }: AdminMobileHeaderProps) {
                       key={link.href}
                       href={link.href}
                       onClick={() => setOpen(false)}
-                      className={`
-                        flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors
-                        ${
-                          isActive
-                            ? "bg-primary/10 text-primary"
-                            : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                        }
-                      `}
+                      className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                        isActive
+                          ? "bg-primary/10 text-primary"
+                          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                      } `}
                     >
                       <link.icon className="h-5 w-5" />
                       {link.label}
@@ -116,9 +108,7 @@ export function AdminMobileHeader({ session }: AdminMobileHeaderProps) {
               </nav>
 
               {/* Sign Out */}
-              <SignOutButton 
-  className="mt-auto text-destructive hover:bg-destructive/10 hover:text-destructive" 
-/>
+              <SignOutButton className="text-destructive hover:bg-destructive/10 hover:text-destructive mt-auto" />
             </div>
           </SheetContent>
         </Sheet>

@@ -3,19 +3,20 @@
 // ==========================================
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
 import {
   BookOpen,
   Library,
-  Search,
-  PlayCircle,
-  Menu,
   LogOut,
+  Menu,
+  PlayCircle,
+  Search,
   User as UserIcon,
 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { ModeToggle } from "~/components/mode-toggle";
 import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
@@ -26,8 +27,7 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
-import { ModeToggle } from "~/components/mode-toggle";
-import { signOutAction } from "../../actions/auth";
+import { signOutAction } from "../../../actions/auth";
 import type { Session } from "../../../server/better-auth/config";
 
 interface UserNavbarProps {
@@ -49,15 +49,15 @@ export function UserNavbar({ session }: UserNavbarProps) {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="border-border bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <Link
           href="/"
           className="flex items-center gap-2 transition-opacity hover:opacity-80"
         >
-          <BookOpen className="h-6 w-6 text-primary" />
-          <span className="font-poppins text-xl font-bold tracking-tight text-primary">
+          <BookOpen className="text-primary h-6 w-6" />
+          <span className="font-poppins text-primary text-xl font-bold tracking-tight">
             BookWorm
           </span>
         </Link>
@@ -70,14 +70,11 @@ export function UserNavbar({ session }: UserNavbarProps) {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`
-                  flex items-center gap-2 text-sm font-medium transition-colors
-                  ${
-                    isActive
-                      ? "text-primary"
-                      : "text-muted-foreground hover:text-foreground"
-                  }
-                `}
+                className={`flex items-center gap-2 text-sm font-medium transition-colors ${
+                  isActive
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                } `}
               >
                 <link.icon className="h-4 w-4" />
                 {link.label}
@@ -99,7 +96,7 @@ export function UserNavbar({ session }: UserNavbarProps) {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="relative h-10 gap-2 rounded-full pl-2 pr-4"
+                  className="relative h-10 gap-2 rounded-full pr-4 pl-2"
                 >
                   {session.user.image ? (
                     <div className="relative h-8 w-8 overflow-hidden rounded-full">
@@ -112,7 +109,7 @@ export function UserNavbar({ session }: UserNavbarProps) {
                       />
                     </div>
                   ) : (
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <div className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-full">
                       <UserIcon className="h-4 w-4" />
                     </div>
                   )}
@@ -125,7 +122,7 @@ export function UserNavbar({ session }: UserNavbarProps) {
                 <DropdownMenuLabel>
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium">{session.user.name}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground text-xs">
                       {session.user.email}
                     </p>
                   </div>
@@ -140,7 +137,7 @@ export function UserNavbar({ session }: UserNavbarProps) {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={handleSignOut}
-                  className="cursor-pointer text-destructive focus:text-destructive"
+                  className="text-destructive focus:text-destructive cursor-pointer"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign Out
@@ -159,7 +156,7 @@ export function UserNavbar({ session }: UserNavbarProps) {
             <SheetContent side="right" className="w-80">
               <div className="flex flex-col gap-6">
                 {/* User Info */}
-                <div className="flex items-center gap-3 border-b border-border pb-4">
+                <div className="border-border flex items-center gap-3 border-b pb-4">
                   {session.user.image ? (
                     <div className="relative h-12 w-12 overflow-hidden rounded-full">
                       <Image
@@ -171,20 +168,20 @@ export function UserNavbar({ session }: UserNavbarProps) {
                       />
                     </div>
                   ) : (
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <div className="bg-primary/10 text-primary flex h-12 w-12 items-center justify-center rounded-full">
                       <UserIcon className="h-6 w-6" />
                     </div>
                   )}
                   <div className="flex flex-col">
                     <p className="text-sm font-medium">{session.user.name}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground text-xs">
                       {session.user.email}
                     </p>
                   </div>
                 </div>
 
                 {/* Theme Toggle */}
-                <div className="flex items-center justify-between border-b border-border pb-4">
+                <div className="border-border flex items-center justify-between border-b pb-4">
                   <span className="text-sm font-medium">Theme</span>
                   <ModeToggle />
                 </div>
@@ -198,14 +195,11 @@ export function UserNavbar({ session }: UserNavbarProps) {
                         key={link.href}
                         href={link.href}
                         onClick={() => setMobileMenuOpen(false)}
-                        className={`
-                          flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors
-                          ${
-                            isActive
-                              ? "bg-primary/10 text-primary"
-                              : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                          }
-                        `}
+                        className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                          isActive
+                            ? "bg-primary/10 text-primary"
+                            : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                        } `}
                       >
                         <link.icon className="h-5 w-5" />
                         {link.label}
@@ -218,7 +212,7 @@ export function UserNavbar({ session }: UserNavbarProps) {
                 <Button
                   variant="ghost"
                   onClick={handleSignOut}
-                  className="mt-auto justify-start text-destructive hover:bg-destructive/10 hover:text-destructive"
+                  className="text-destructive hover:bg-destructive/10 hover:text-destructive mt-auto justify-start"
                 >
                   <LogOut className="mr-2 h-5 w-5" />
                   Sign Out

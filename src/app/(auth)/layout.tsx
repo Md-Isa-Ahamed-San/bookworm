@@ -1,7 +1,6 @@
 // ==========================================
 // 📁 src/app/(auth)/layout.tsx
 // ==========================================
-import { Toaster } from "sonner";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -17,18 +16,7 @@ export default function AuthLayout({
   return (
     <>
       <div className="bg-background min-h-screen">{children}</div>
-      <Toaster
-        position="top-center"
-        richColors
-        closeButton
-        toastOptions={{
-          classNames: {
-            error: "bg-destructive text-destructive-foreground",
-            success: "bg-primary text-primary-foreground",
-            warning: "bg-accent text-accent-foreground",
-          },
-        }}
-      />
+      
     </>
   );
 }

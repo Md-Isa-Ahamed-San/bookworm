@@ -1,15 +1,17 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { signUpAction } from "../../../actions/auth";
+import { signUpAction } from "../../../../actions/auth";
+import {
+  registerSchema,
+  type RegisterFormData,
+} from "../../../../lib/zod_schema";
 import { RegisterCard } from "./register-card";
-import { registerSchema, type RegisterFormData } from "../../../../lib/zod_schema";
-
 
 export function RegisterForm() {
   const router = useRouter();

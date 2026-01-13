@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 "use server";
 
-import { z } from "zod";
-import { auth } from "../../server/better-auth";
-import { redirect } from "next/navigation";
 import { headers } from "next/headers";
-import { uploadImage } from "../../server/lib/cloudinary";
+import { redirect } from "next/navigation";
+import { z } from "zod";
+import { auth } from "../server/better-auth";
+import { uploadImage } from "../server/lib/cloudinary";
 
 const signUpSchema = z.object({
   email: z.string().email("Invalid email address"),
