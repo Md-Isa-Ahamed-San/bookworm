@@ -1,0 +1,1 @@
+export default function GenresPage() { return <h1>Manage Book Genres</h1>; }

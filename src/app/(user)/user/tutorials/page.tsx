@@ -1,0 +1,1 @@
+export default function WatchTutorialsPage() { return <h1>Watch Book Tutorials</h1>; }

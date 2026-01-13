@@ -1,0 +1,1 @@
+export default function ManageTutorialsPage() { return <h1>Manage Video Tutorials</h1>; }

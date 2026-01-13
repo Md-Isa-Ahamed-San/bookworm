@@ -1,0 +1,1 @@
+export default function AdminBooksPage() { return <h1>Admin Books Overview</h1>; }

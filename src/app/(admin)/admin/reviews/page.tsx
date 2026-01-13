@@ -1,0 +1,1 @@
+export default function ModerateReviewsPage() { return <h1>Moderate User Reviews</h1>; }

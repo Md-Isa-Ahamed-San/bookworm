@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-// db/seed.ts
-
 import { auth } from "./better-auth";
 import { db } from "./db";
 
@@ -15,34 +10,43 @@ async function main() {
   await db.book.deleteMany();
   await db.genre.deleteMany();
 
-  // Clear Auth data (Important: Wipe these so Better Auth can re-create them correctly)
+  // Clear Auth data
   await db.session.deleteMany();
   await db.account.deleteMany();
   await db.user.deleteMany();
 
   console.log("--- 👤 Seeding Users via Better Auth API ---");
 
-  // 1. Create Admin User
+  /**
+   * -----------------------------
+   * 1. Create Admin User
+   * -----------------------------
+   */
   const adminRes = await auth.api.signUpEmail({
     body: {
       email: "admin@bookworm.com",
       password: "admin@bookworm.com",
       name: "Admin User",
+      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=admin",
     },
   });
   const adminId = adminRes.user.id;
-  // Update custom fields that Better Auth API doesn't handle by default
   await db.user.update({
     where: { id: adminId },
     data: { role: "ADMIN", emailVerified: true },
   });
 
-  // 2. Create Normal User 1
+  /**
+   * -----------------------------
+   * 2. Create Normal User 1
+   * -----------------------------
+   */
   const user1Res = await auth.api.signUpEmail({
     body: {
       email: "user1@bookworm.com",
       password: "user1@bookworm.com",
       name: "John Doe",
+      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=john",
     },
   });
   const user1Id = user1Res.user.id;
@@ -51,12 +55,17 @@ async function main() {
     data: { emailVerified: true },
   });
 
-  // 3. Create Normal User 2
+  /**
+   * -----------------------------
+   * 3. Create Normal User 2
+   * -----------------------------
+   */
   const user2Res = await auth.api.signUpEmail({
     body: {
       email: "user2@bookworm.com",
       password: "user2@bookworm.com",
       name: "Jane Smith",
+      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=jane",
     },
   });
   const user2Id = user2Res.user.id;
@@ -65,7 +74,7 @@ async function main() {
     data: { emailVerified: true },
   });
 
-  console.log("✅ Users created and verified");
+  console.log("✅ Users created with profile photos and verified");
 
   console.log("--- 📚 Seeding Genres ---");
   const genres = await Promise.all([
@@ -211,9 +220,9 @@ async function main() {
 
   console.log("\n🎉 Database seeded successfully!\n");
   console.log("📧 Login Credentials:");
-  console.log("ADMIN: admin@bookworm.com / admin123");
-  console.log("USER 1: user1@bookworm.com / user123");
-  console.log("USER 2: user2@bookworm.com / user123");
+  console.log("ADMIN: admin@bookworm.com / admin@bookworm.com");
+  console.log("USER 1: user1@bookworm.com / user1@bookworm.com");
+  console.log("USER 2: user2@bookworm.com / user2@bookworm.com");
 }
 
 main()

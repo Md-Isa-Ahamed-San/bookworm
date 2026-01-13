@@ -1,0 +1,1 @@
+export default function BrowseBooksPage() { return <h1>Browse All Books</h1>; }
