@@ -1,45 +1,42 @@
-// Prisma schema for Better Auth
-// learn more: https://better-auth.com/docs/concepts/database
+// Prisma schema for BookWorm with Better Auth
+// Combined authentication and application models
 
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
 
-// NOTE: When using mysql or sqlserver, uncomment the //@db.Text annotations in model Account below
-// Further reading:
-// https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model Post {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  createdBy   User   @relation(fields: [createdById], references: [id])
-  createdById String
-
-  @@index([name])
-}
+// ============================================
+// BETTER AUTH MODELS (Keep as is)
+// ============================================
 
 model User {
-  id            String    @id
-  name          String //@db.Text
+  id            String   @id
+  name          String
   email         String
-  emailVerified Boolean   @default(false)
-  image         String? //@db.Text
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  posts         Post[]
+  emailVerified Boolean  @default(false)
+  image         String?
+  role          UserRole @default(USER) // Added for BookWorm
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
+
+  // Better Auth relationships
+  sessions Session[]
+  accounts Account[]
+
+  // BookWorm relationships
+  createdBooks     Book[]     @relation("BookCreator")
+  reviews          Review[]
+  userBooks        UserBook[]
+  createdTutorials Tutorial[] @relation("TutorialCreator")
 
   @@unique([email])
+  @@index([email])
   @@map("user")
 }
 
@@ -49,8 +46,8 @@ model Session {
   token     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  ipAddress String? //@db.Text
-  userAgent String? //@db.Text
+  ipAddress String?
+  userAgent String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -60,17 +57,17 @@ model Session {
 
 model Account {
   id                    String    @id
-  accountId             String //@db.Text
-  providerId            String //@db.Text
+  accountId             String
+  providerId            String
   userId                String
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accessToken           String? //@db.Text
-  refreshToken          String? //@db.Text
-  idToken               String? //@db.Text
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
   accessTokenExpiresAt  DateTime?
   refreshTokenExpiresAt DateTime?
-  scope                 String? //@db.Text
-  password              String? //@db.Text
+  scope                 String?
+  password              String?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 
@@ -79,11 +76,123 @@ model Account {
 
 model Verification {
   id         String   @id
-  identifier String //@db.Text
-  value      String //@db.Text
+  identifier String
+  value      String
   expiresAt  DateTime
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now()) @updatedAt
 
   @@map("verification")
+}
+
+// ============================================
+// BOOKWORM APPLICATION MODELS
+// ============================================
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model Book {
+  id          String   @id @default(cuid())
+  title       String
+  author      String
+  description String   @db.Text
+  coverUrl    String
+  totalPages  Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Foreign Keys
+  genreId         String
+  createdByUserId String
+
+  // Relationships
+  genre     Genre      @relation(fields: [genreId], references: [id], onDelete: Restrict)
+  createdBy User       @relation("BookCreator", fields: [createdByUserId], references: [id])
+  reviews   Review[]
+  userBooks UserBook[]
+
+  @@index([genreId])
+  @@index([title])
+  @@index([author])
+  @@map("books")
+}
+
+model Genre {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  books Book[]
+
+  @@map("genres")
+}
+
+model UserBook {
+  id        String    @id @default(cuid())
+  userId    String
+  bookId    String
+  shelf     ShelfType
+  progress  Int       @default(0) // Percentage (0-100) or pages read
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relationships
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookId])
+  @@index([userId, shelf])
+  @@map("user_books")
+}
+
+enum ShelfType {
+  WANT_TO_READ
+  CURRENTLY_READING
+  READ
+}
+
+model Review {
+  id        String       @id @default(cuid())
+  userId    String
+  bookId    String
+  rating    Int // 1-5 stars
+  text      String       @db.Text
+  status    ReviewStatus @default(PENDING)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  // Relationships
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookId])
+  @@index([bookId, status])
+  @@index([status])
+  @@map("reviews")
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Tutorial {
+  id              String   @id @default(cuid())
+  title           String
+  youtubeUrl      String
+  description     String?  @db.Text
+  createdByUserId String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relationships
+  createdBy User @relation("TutorialCreator", fields: [createdByUserId], references: [id])
+
+  @@map("tutorials")
 }

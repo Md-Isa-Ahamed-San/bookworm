@@ -121,20 +121,13 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.PostScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  createdById: 'createdById'
-};
-
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
   email: 'email',
   emailVerified: 'emailVerified',
   image: 'image',
+  role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -175,6 +168,57 @@ exports.Prisma.VerificationScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.BookScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  author: 'author',
+  description: 'description',
+  coverUrl: 'coverUrl',
+  totalPages: 'totalPages',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  genreId: 'genreId',
+  createdByUserId: 'createdByUserId'
+};
+
+exports.Prisma.GenreScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UserBookScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  bookId: 'bookId',
+  shelf: 'shelf',
+  progress: 'progress',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ReviewScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  bookId: 'bookId',
+  rating: 'rating',
+  text: 'text',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TutorialScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  youtubeUrl: 'youtubeUrl',
+  description: 'description',
+  createdByUserId: 'createdByUserId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -189,14 +233,33 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.UserRole = exports.$Enums.UserRole = {
+  USER: 'USER',
+  ADMIN: 'ADMIN'
+};
 
+exports.ShelfType = exports.$Enums.ShelfType = {
+  WANT_TO_READ: 'WANT_TO_READ',
+  CURRENTLY_READING: 'CURRENTLY_READING',
+  READ: 'READ'
+};
+
+exports.ReviewStatus = exports.$Enums.ReviewStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
 
 exports.Prisma.ModelName = {
-  Post: 'Post',
   User: 'User',
   Session: 'Session',
   Account: 'Account',
-  Verification: 'Verification'
+  Verification: 'Verification',
+  Book: 'Book',
+  Genre: 'Genre',
+  UserBook: 'UserBook',
+  Review: 'Review',
+  Tutorial: 'Tutorial'
 };
 
 /**

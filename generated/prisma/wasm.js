@@ -93,20 +93,13 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.PostScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  createdById: 'createdById'
-};
-
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
   email: 'email',
   emailVerified: 'emailVerified',
   image: 'image',
+  role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -147,6 +140,57 @@ exports.Prisma.VerificationScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.BookScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  author: 'author',
+  description: 'description',
+  coverUrl: 'coverUrl',
+  totalPages: 'totalPages',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  genreId: 'genreId',
+  createdByUserId: 'createdByUserId'
+};
+
+exports.Prisma.GenreScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UserBookScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  bookId: 'bookId',
+  shelf: 'shelf',
+  progress: 'progress',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ReviewScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  bookId: 'bookId',
+  rating: 'rating',
+  text: 'text',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TutorialScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  youtubeUrl: 'youtubeUrl',
+  description: 'description',
+  createdByUserId: 'createdByUserId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -161,14 +205,33 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.UserRole = exports.$Enums.UserRole = {
+  USER: 'USER',
+  ADMIN: 'ADMIN'
+};
 
+exports.ShelfType = exports.$Enums.ShelfType = {
+  WANT_TO_READ: 'WANT_TO_READ',
+  CURRENTLY_READING: 'CURRENTLY_READING',
+  READ: 'READ'
+};
+
+exports.ReviewStatus = exports.$Enums.ReviewStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
 
 exports.Prisma.ModelName = {
-  Post: 'Post',
   User: 'User',
   Session: 'Session',
   Account: 'Account',
-  Verification: 'Verification'
+  Verification: 'Verification',
+  Book: 'Book',
+  Genre: 'Genre',
+  UserBook: 'UserBook',
+  Review: 'Review',
+  Tutorial: 'Tutorial'
 };
 /**
  * Create the Client
@@ -209,6 +272,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -217,13 +281,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// Prisma schema for Better Auth\n// learn more: https://better-auth.com/docs/concepts/database\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\n// NOTE: When using mysql or sqlserver, uncomment the //@db.Text annotations in model Account below\n// Further reading:\n// https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Post {\n  id        String   @id @default(cuid())\n  name      String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  createdBy   User   @relation(fields: [createdById], references: [id])\n  createdById String\n\n  @@index([name])\n}\n\nmodel User {\n  id            String    @id\n  name          String //@db.Text\n  email         String\n  emailVerified Boolean   @default(false)\n  image         String? //@db.Text\n  createdAt     DateTime  @default(now())\n  updatedAt     DateTime  @default(now()) @updatedAt\n  sessions      Session[]\n  accounts      Account[]\n  posts         Post[]\n\n  @@unique([email])\n  @@map(\"user\")\n}\n\nmodel Session {\n  id        String   @id\n  expiresAt DateTime\n  token     String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  ipAddress String? //@db.Text\n  userAgent String? //@db.Text\n  userId    String\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([token])\n  @@map(\"session\")\n}\n\nmodel Account {\n  id                    String    @id\n  accountId             String //@db.Text\n  providerId            String //@db.Text\n  userId                String\n  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)\n  accessToken           String? //@db.Text\n  refreshToken          String? //@db.Text\n  idToken               String? //@db.Text\n  accessTokenExpiresAt  DateTime?\n  refreshTokenExpiresAt DateTime?\n  scope                 String? //@db.Text\n  password              String? //@db.Text\n  createdAt             DateTime  @default(now())\n  updatedAt             DateTime  @updatedAt\n\n  @@map(\"account\")\n}\n\nmodel Verification {\n  id         String   @id\n  identifier String //@db.Text\n  value      String //@db.Text\n  expiresAt  DateTime\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @default(now()) @updatedAt\n\n  @@map(\"verification\")\n}\n",
-  "inlineSchemaHash": "13b811a21e98325911952479534b19039c5183588e791c7b9235c4279bb03147",
+  "inlineSchema": "// Prisma schema for BookWorm with Better Auth\n// Combined authentication and application models\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n// ============================================\n// BETTER AUTH MODELS (Keep as is)\n// ============================================\n\nmodel User {\n  id            String   @id\n  name          String\n  email         String\n  emailVerified Boolean  @default(false)\n  image         String?\n  role          UserRole @default(USER) // Added for BookWorm\n  createdAt     DateTime @default(now())\n  updatedAt     DateTime @default(now()) @updatedAt\n\n  // Better Auth relationships\n  sessions Session[]\n  accounts Account[]\n\n  // BookWorm relationships\n  createdBooks     Book[]     @relation(\"BookCreator\")\n  reviews          Review[]\n  userBooks        UserBook[]\n  createdTutorials Tutorial[] @relation(\"TutorialCreator\")\n\n  @@unique([email])\n  @@index([email])\n  @@map(\"user\")\n}\n\nmodel Session {\n  id        String   @id\n  expiresAt DateTime\n  token     String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  ipAddress String?\n  userAgent String?\n  userId    String\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([token])\n  @@map(\"session\")\n}\n\nmodel Account {\n  id                    String    @id\n  accountId             String\n  providerId            String\n  userId                String\n  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)\n  accessToken           String?\n  refreshToken          String?\n  idToken               String?\n  accessTokenExpiresAt  DateTime?\n  refreshTokenExpiresAt DateTime?\n  scope                 String?\n  password              String?\n  createdAt             DateTime  @default(now())\n  updatedAt             DateTime  @updatedAt\n\n  @@map(\"account\")\n}\n\nmodel Verification {\n  id         String   @id\n  identifier String\n  value      String\n  expiresAt  DateTime\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @default(now()) @updatedAt\n\n  @@map(\"verification\")\n}\n\n// ============================================\n// BOOKWORM APPLICATION MODELS\n// ============================================\n\nenum UserRole {\n  USER\n  ADMIN\n}\n\nmodel Book {\n  id          String   @id @default(cuid())\n  title       String\n  author      String\n  description String   @db.Text\n  coverUrl    String\n  totalPages  Int?\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  // Foreign Keys\n  genreId         String\n  createdByUserId String\n\n  // Relationships\n  genre     Genre      @relation(fields: [genreId], references: [id], onDelete: Restrict)\n  createdBy User       @relation(\"BookCreator\", fields: [createdByUserId], references: [id])\n  reviews   Review[]\n  userBooks UserBook[]\n\n  @@index([genreId])\n  @@index([title])\n  @@index([author])\n  @@map(\"books\")\n}\n\nmodel Genre {\n  id        String   @id @default(cuid())\n  name      String   @unique\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  // Relationships\n  books Book[]\n\n  @@map(\"genres\")\n}\n\nmodel UserBook {\n  id        String    @id @default(cuid())\n  userId    String\n  bookId    String\n  shelf     ShelfType\n  progress  Int       @default(0) // Percentage (0-100) or pages read\n  createdAt DateTime  @default(now())\n  updatedAt DateTime  @updatedAt\n\n  // Relationships\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)\n\n  @@unique([userId, bookId])\n  @@index([userId, shelf])\n  @@map(\"user_books\")\n}\n\nenum ShelfType {\n  WANT_TO_READ\n  CURRENTLY_READING\n  READ\n}\n\nmodel Review {\n  id        String       @id @default(cuid())\n  userId    String\n  bookId    String\n  rating    Int // 1-5 stars\n  text      String       @db.Text\n  status    ReviewStatus @default(PENDING)\n  createdAt DateTime     @default(now())\n  updatedAt DateTime     @updatedAt\n\n  // Relationships\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)\n\n  @@unique([userId, bookId])\n  @@index([bookId, status])\n  @@index([status])\n  @@map(\"reviews\")\n}\n\nenum ReviewStatus {\n  PENDING\n  APPROVED\n  REJECTED\n}\n\nmodel Tutorial {\n  id              String   @id @default(cuid())\n  title           String\n  youtubeUrl      String\n  description     String?  @db.Text\n  createdByUserId String\n  createdAt       DateTime @default(now())\n  updatedAt       DateTime @updatedAt\n\n  // Relationships\n  createdBy User @relation(\"TutorialCreator\", fields: [createdByUserId], references: [id])\n\n  @@map(\"tutorials\")\n}\n",
+  "inlineSchemaHash": "428437a9ad768c84d242a225a846cf63303c0ac5425a69df22351393f71ab07d",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Post\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdBy\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"PostToUser\"},{\"name\":\"createdById\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"emailVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"image\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"sessions\",\"kind\":\"object\",\"type\":\"Session\",\"relationName\":\"SessionToUser\"},{\"name\":\"accounts\",\"kind\":\"object\",\"type\":\"Account\",\"relationName\":\"AccountToUser\"},{\"name\":\"posts\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"PostToUser\"}],\"dbName\":\"user\"},\"Session\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"token\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"ipAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"SessionToUser\"}],\"dbName\":\"session\"},\"Account\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"accountId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"providerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"AccountToUser\"},{\"name\":\"accessToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"refreshToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"idToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"accessTokenExpiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"refreshTokenExpiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"scope\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"account\"},\"Verification\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"identifier\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"value\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"verification\"}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"emailVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"image\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"UserRole\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"sessions\",\"kind\":\"object\",\"type\":\"Session\",\"relationName\":\"SessionToUser\"},{\"name\":\"accounts\",\"kind\":\"object\",\"type\":\"Account\",\"relationName\":\"AccountToUser\"},{\"name\":\"createdBooks\",\"kind\":\"object\",\"type\":\"Book\",\"relationName\":\"BookCreator\"},{\"name\":\"reviews\",\"kind\":\"object\",\"type\":\"Review\",\"relationName\":\"ReviewToUser\"},{\"name\":\"userBooks\",\"kind\":\"object\",\"type\":\"UserBook\",\"relationName\":\"UserToUserBook\"},{\"name\":\"createdTutorials\",\"kind\":\"object\",\"type\":\"Tutorial\",\"relationName\":\"TutorialCreator\"}],\"dbName\":\"user\"},\"Session\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"token\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"ipAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"SessionToUser\"}],\"dbName\":\"session\"},\"Account\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"accountId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"providerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"AccountToUser\"},{\"name\":\"accessToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"refreshToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"idToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"accessTokenExpiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"refreshTokenExpiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"scope\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"account\"},\"Verification\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"identifier\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"value\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"verification\"},\"Book\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"author\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"coverUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"totalPages\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"genreId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdByUserId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"genre\",\"kind\":\"object\",\"type\":\"Genre\",\"relationName\":\"BookToGenre\"},{\"name\":\"createdBy\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"BookCreator\"},{\"name\":\"reviews\",\"kind\":\"object\",\"type\":\"Review\",\"relationName\":\"BookToReview\"},{\"name\":\"userBooks\",\"kind\":\"object\",\"type\":\"UserBook\",\"relationName\":\"BookToUserBook\"}],\"dbName\":\"books\"},\"Genre\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"books\",\"kind\":\"object\",\"type\":\"Book\",\"relationName\":\"BookToGenre\"}],\"dbName\":\"genres\"},\"UserBook\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"bookId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"shelf\",\"kind\":\"enum\",\"type\":\"ShelfType\"},{\"name\":\"progress\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserToUserBook\"},{\"name\":\"book\",\"kind\":\"object\",\"type\":\"Book\",\"relationName\":\"BookToUserBook\"}],\"dbName\":\"user_books\"},\"Review\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"bookId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"rating\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"text\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"ReviewStatus\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ReviewToUser\"},{\"name\":\"book\",\"kind\":\"object\",\"type\":\"Book\",\"relationName\":\"BookToReview\"}],\"dbName\":\"reviews\"},\"Tutorial\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"youtubeUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdByUserId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdBy\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"TutorialCreator\"}],\"dbName\":\"tutorials\"}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),
