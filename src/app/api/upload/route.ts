@@ -16,7 +16,7 @@ cloudinary.config({
 });
 
 // POST /api/upload
-export async function POST_UPLOAD(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     const session = await getSession();
     if (!session) {
