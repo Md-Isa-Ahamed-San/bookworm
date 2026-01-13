@@ -28,12 +28,14 @@ export default tseslint.config(
       "@typescript-eslint/no-redundant-type-constituents": "off",
       // ---------------------------------
 
+      // --- READABILITY & SAFETY PREFERENCES ---
+      "@typescript-eslint/prefer-optional-chain": "off",
+     "@typescript-eslint/prefer-nullish-coalescing": "off",
+      "@typescript-eslint/consistent-type-imports": "off",
+      // ---------------------------------------
+
       "@typescript-eslint/array-type": "off",
       "@typescript-eslint/consistent-type-definitions": "off",
-      "@typescript-eslint/consistent-type-imports": [
-        "warn",
-        { prefer: "type-imports", fixStyle: "inline-type-imports" },
-      ],
       "@typescript-eslint/no-unused-vars": [
         "warn",
         { argsIgnorePattern: "^_" },
