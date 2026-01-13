@@ -1,3 +1,6 @@
+This is the updated, professional `README.md` for your project, now including the dedicated **API Architecture** section with the directory tree.
+
+---
 
 # 📚 BookWorm
 
@@ -18,7 +21,7 @@
 - **ORM:** [Prisma](https://www.prisma.io/)
 - **Database:** PostgreSQL (Hosted on Neon)
 - **State Management:** TanStack Query (React Query)
-- **Image Hosting:** Cloudinary
+- **Image Hosting:** [Cloudinary](https://cloudinary.com/)
 
 ### Authentication & Security
 - **Provider:** [Better Auth](https://www.better-auth.com/)
@@ -62,6 +65,43 @@ The application features a "No Public Homepage" policy. The root route (`/`) act
 
 ---
 
+## 🛣️ API Architecture
+
+The backend follows a modular RESTful structure within the Next.js App Router:
+
+```text
+src/app/api/
+├── books/
+│   ├── route.ts (GET, POST)
+│   └── [id]/route.ts (GET, PUT, DELETE)
+├── genres/
+│   ├── route.ts (GET, POST)
+│   └── [id]/route.ts (GET, PUT, DELETE)
+├── reviews/
+│   ├── route.ts (POST)
+│   ├── book/[bookId]/route.ts (GET)
+│   ├── pending/route.ts (GET)
+│   ├── user/route.ts (GET)
+│   └── [id]/
+│       ├── moderate/route.ts (PUT)
+│       └── route.ts (DELETE)
+├── library/
+│   └── shelves/
+│       ├── route.ts (GET, POST)
+│       └── [id]/route.ts (PUT, DELETE)
+├── recommendations/route.ts (GET)
+├── tutorials/
+│   ├── route.ts (GET, POST)
+│   └── [id]/route.ts (GET, PUT, DELETE)
+├── users/
+│   ├── route.ts (GET)
+│   └── [id]/role/route.ts (PUT)
+├── admin/stats/route.ts (GET)
+└── upload/route.ts (POST)
+```
+
+---
+
 ## 🛠️ Getting Started
 
 ### 1. Clone the repository
@@ -82,6 +122,8 @@ DATABASE_URL="postgresql://..."
 BETTER_AUTH_SECRET="your_secret_here"
 BETTER_AUTH_URL="http://localhost:3000"
 NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="your_cloud_name"
+CLOUDINARY_API_KEY="..."
+CLOUDINARY_API_SECRET="..."
 ```
 
 ### 4. Database Setup
@@ -89,7 +131,7 @@ NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="your_cloud_name"
 npx prisma db push
 npx prisma db seed
 ```
-*Note: The seed script creates an initial Admin user (`admin@bookworm.com` / `admin123`) and sample book data.*
+*Note: The seed script creates an initial Admin user (`admin@bookworm.com` / `admin@bookworm.com`) and sample book data.*
 
 ### 5. Run the development server
 ```bash
