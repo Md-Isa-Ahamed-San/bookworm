@@ -12,6 +12,7 @@ import {
 import { getSession } from "~/server/better-auth/server";
 import { redirect } from "next/navigation";
 import { signOutAction } from "../actions/auth";
+import { ModeToggle } from "../../components/mode-toggle";
 
 export default async function AdminLayout({
   children,
@@ -57,6 +58,7 @@ export default async function AdminLayout({
         </nav>
 
         <div className="border-border border-t p-4">
+          <ModeToggle />
           <div className="mb-4 flex items-center gap-3 px-2">
             <div className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-full font-bold">
               {session.user.name?.[0]}

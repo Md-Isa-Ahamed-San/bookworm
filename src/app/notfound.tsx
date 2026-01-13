@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
-import NotFoundGoBackButton from "./components/not-found-go-back-button";
+
+import NotFoundGoBackButton from "../components/not-found-go-back-button";
 import "./not-found.css";
 
 const NotFound = () => {

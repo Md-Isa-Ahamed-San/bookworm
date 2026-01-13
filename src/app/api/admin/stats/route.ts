@@ -3,8 +3,8 @@
 // ==========================================
 
 import { NextResponse, type NextRequest } from "next/server";
-import { getSession } from "../../../server/better-auth/server";
-import { db } from "../../../server/db";
+import { db } from "../../../../server/db";
+import { getSession } from "../../../../server/better-auth/server";
 
 // src/app/api/admin/stats/route.ts
 // GET /api/admin/stats

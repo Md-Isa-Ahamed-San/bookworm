@@ -5,8 +5,8 @@
 
 import type { NextRequest } from "next/server";
 import z from "zod";
-import { getSession } from "../../../server/better-auth/server";
-import { db } from "../../../server/db";
+import { getSession } from "../../../../server/better-auth/server";
+import { db } from "../../../../server/db";
 
 // src/app/api/library/shelves/route.ts
 const addToShelfSchema = z.object({
