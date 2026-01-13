@@ -52,8 +52,7 @@ export async function signUpAction(formData: FormData) {
     },
   });
 
-  // 5. Redirect to Traffic Controller
-  redirect("/");
+  return { success: true };
 }
 /**
  * -----------------------------
@@ -93,7 +92,7 @@ export async function signInAction(formData: FormData) {
   });
 
   // Redirect to Traffic Controller to handle role-based routing
-  redirect("/");
+  return { success: true };
 }
 
 /**

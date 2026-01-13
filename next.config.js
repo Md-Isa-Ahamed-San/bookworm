@@ -1,10 +1,20 @@
-/**
- * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
- * for Docker builds.
- */
-import "./src/env.js";
-
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+  images: {
+    // Allow all external image URLs
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**", // Allow any hostname
+      },
+      {
+        protocol: "http",
+        hostname: "**", // Allow any hostname
+      },
+    ],
+    dangerouslyAllowSVG: true, // optional if you upload SVGs
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;", // optional
+  },
+};
 
 export default config;
