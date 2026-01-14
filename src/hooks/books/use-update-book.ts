@@ -12,7 +12,7 @@ export function useUpdateBook() {
       updateBook(id, data),
     onSuccess: (result) => {
       if (result.success) {
-        queryClient.invalidateQueries({ queryKey: ['books'] })
+        void queryClient.invalidateQueries({ queryKey: ['books'] })
         toast.success("Book updated successfully")
       } else {
         toast.error(result.error || "Failed to update book")

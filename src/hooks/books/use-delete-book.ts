@@ -11,7 +11,7 @@ export function useDeleteBook() {
     mutationFn: (id: string) => deleteBook(id),
     onSuccess: (result) => {
       if (result.success) {
-        queryClient.invalidateQueries({ queryKey: ['books'] })
+        void queryClient.invalidateQueries({ queryKey: ['books'] })
         toast.success("Book deleted successfully")
       } else {
         toast.error(result.error || "Failed to delete book")

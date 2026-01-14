@@ -10,7 +10,7 @@ export function useDeleteTutorial() {
   return useMutation({
     mutationFn: (tutorialId: string) => deleteTutorial(tutorialId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["tutorials"] });
+      void queryClient.invalidateQueries({ queryKey: ["tutorials"] });
       toast.success("Tutorial deleted successfully");
     },
     onError: (error: Error) => {

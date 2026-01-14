@@ -16,7 +16,7 @@ export function useUpdateTutorial() {
       data: { title: string; youtubeUrl: string; description?: string };
     }) => updateTutorial(tutorialId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["tutorials"] });
+      void queryClient.invalidateQueries({ queryKey: ["tutorials"] });
       toast.success("Tutorial updated successfully");
     },
     onError: (error: Error) => {

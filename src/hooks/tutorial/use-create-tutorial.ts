@@ -14,7 +14,7 @@ export function useCreateTutorial() {
       description?: string;
     }) => createTutorial(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["tutorials"] });
+      void queryClient.invalidateQueries({ queryKey: ["tutorials"] });
       toast.success("Tutorial created successfully");
     },
     onError: (error: Error) => {

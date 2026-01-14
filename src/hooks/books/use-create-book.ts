@@ -11,7 +11,7 @@ export function useCreateBook() {
     mutationFn: (data: Parameters<typeof createBook>[0]) => createBook(data),
     onSuccess: (result) => {
       if (result.success) {
-        queryClient.invalidateQueries({ queryKey: ['books'] })
+        void queryClient.invalidateQueries({ queryKey: ['books'] })
         toast.success("Book created successfully")
       } else {
         toast.error(result.error || "Failed to create book")
