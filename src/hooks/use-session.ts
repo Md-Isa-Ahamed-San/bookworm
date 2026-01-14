@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { authClient } from "../server/better-auth/client"; // Import CLIENT, not server
+import { authClient } from "../server/better-auth/client";
 
 export function useSession() {
   return useQuery({

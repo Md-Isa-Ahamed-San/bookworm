@@ -28,19 +28,22 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginFormData) => {
     startTransition(async () => {
-      try {
-        // Create FormData for server action
-        const formData = new FormData();
-        formData.append("email", data.email);
-        formData.append("password", data.password);
+      // 1. Create FormData
+      const formData = new FormData();
+      formData.append("email", data.email);
+      formData.append("password", data.password);
 
-        await signInAction(formData);
+      // 2. Capture the RESULT of the action
+      const result = await signInAction(formData);
+
+      // 3. Check the result
+      if (result?.success) {
         toast.success("Login successful! Redirecting...");
         router.push("/");
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Login failed";
-        toast.error(errorMessage);
+        router.refresh(); // Refresh to update the session in the layout
+      } else {
+        // ✅ This is where the error toast finally triggers
+        toast.error(result?.error || "Invalid email or password");
       }
     });
   };
