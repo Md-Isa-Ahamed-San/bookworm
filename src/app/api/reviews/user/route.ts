@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
 
     return Response.json(reviews);
   } catch (error) {
-    console.error("GET /api/reviews/user error:", error);
+    //console..error("GET /api/reviews/user error:", error);
     return Response.json(
       { error: "Failed to fetch user reviews" },
       { status: 500 },

@@ -1,8 +1,8 @@
 // src/app/api/genres/[id]/route.ts
 
 import type { NextRequest } from "next/server";
-import { getSession } from "../../../../server/better-auth/server";
 import z from "zod";
+import { getSession } from "../../../../server/better-auth/server";
 import { db } from "../../../../server/db";
 
 const createGenreSchema = z.object({
@@ -34,7 +34,7 @@ export async function GET(
 
     return Response.json(genre);
   } catch (error) {
-    console.error("GET /api/genres/[id] error:", error);
+    //console..error("GET /api/genres/[id] error:", error);
     return Response.json({ error: "Failed to fetch genre" }, { status: 500 });
   }
 }
@@ -64,7 +64,7 @@ export async function PUT(
     if (error instanceof z.ZodError) {
       return Response.json({ error: error.errors }, { status: 400 });
     }
-    console.error("PUT /api/genres/[id] error:", error);
+    //console..error("PUT /api/genres/[id] error:", error);
     return Response.json({ error: "Failed to update genre" }, { status: 500 });
   }
 }
@@ -95,7 +95,7 @@ export async function DELETE(
 
     return Response.json({ success: true });
   } catch (error) {
-    console.error("DELETE /api/genres/[id] error:", error);
+    //console..error("DELETE /api/genres/[id] error:", error);
     return Response.json({ error: "Failed to delete genre" }, { status: 500 });
   }
 }

@@ -1,4 +1,3 @@
-
 // ==========================================
 // 📖 LIBRARY/SHELVES API ROUTES
 // ==========================================
@@ -65,11 +64,8 @@ export async function GET(request: NextRequest) {
 
     return Response.json(booksWithRatings);
   } catch (error) {
-    console.error("GET /api/library/shelves error:", error);
-    return Response.json(
-      { error: "Failed to fetch shelves" },
-      { status: 500 },
-    );
+    //console..error("GET /api/library/shelves error:", error);
+    return Response.json({ error: "Failed to fetch shelves" }, { status: 500 });
   }
 }
 
@@ -126,13 +122,10 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return Response.json({ error: error.errors }, { status: 400 });
     }
-    console.error("POST /api/library/shelves error:", error);
+    //console..error("POST /api/library/shelves error:", error);
     return Response.json(
       { error: "Failed to add book to shelf" },
       { status: 500 },
     );
   }
 }
-
-
-

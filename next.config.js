@@ -15,6 +15,11 @@ const config = {
     dangerouslyAllowSVG: true, // optional if you upload SVGs
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;", // optional
   },
+  compiler: {
+    // This removes all console.* calls except console.error
+    removeConsole:
+      process.env.NODE_ENV === "production" ? { exclude: ["error"] } : false,
+  },
 };
 
 export default config;

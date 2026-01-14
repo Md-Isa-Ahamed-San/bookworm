@@ -1,4 +1,3 @@
-
 // ==========================================
 // 🎥 TUTORIALS API ROUTES
 // ==========================================
@@ -32,7 +31,7 @@ export async function GET(request: NextRequest) {
 
     return Response.json(tutorials);
   } catch (error) {
-    console.error("GET /api/tutorials error:", error);
+    //console..error("GET /api/tutorials error:", error);
     return Response.json(
       { error: "Failed to fetch tutorials" },
       { status: 500 },
@@ -66,11 +65,10 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return Response.json({ error: error.errors }, { status: 400 });
     }
-    console.error("POST /api/tutorials error:", error);
+    //console..error("POST /api/tutorials error:", error);
     return Response.json(
       { error: "Failed to create tutorial" },
       { status: 500 },
     );
   }
 }
-

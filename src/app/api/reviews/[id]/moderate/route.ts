@@ -1,6 +1,6 @@
+import type { NextRequest } from "next/server";
 import z from "zod";
 import { getSession } from "../../../../../server/better-auth/server";
-import type { NextRequest } from "next/server";
 import { db } from "../../../../../server/db";
 
 // src/app/api/reviews/[id]/moderate/route.ts
@@ -37,7 +37,7 @@ export async function PUT(
     if (error instanceof z.ZodError) {
       return Response.json({ error: error.errors }, { status: 400 });
     }
-    console.error("PUT /api/reviews/[id]/moderate error:", error);
+    //console..error("PUT /api/reviews/[id]/moderate error:", error);
     return Response.json(
       { error: "Failed to moderate review" },
       { status: 500 },

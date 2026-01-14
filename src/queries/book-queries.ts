@@ -97,7 +97,7 @@ export async function getAllBooks(filters: BookFilters = {}) {
       },
     };
   } catch (error) {
-    console.error("Error fetching books:", error);
+    //console..error("Error fetching books:", error);
     throw new Error("Failed to fetch books");
   }
 }
@@ -124,7 +124,7 @@ export async function getBookById(id: string) {
 
     return { ...book, avgRating };
   } catch (error) {
-    console.error("Error fetching book:", error);
+    //console..error("Error fetching book:", error);
     throw new Error("Failed to fetch book");
   }
 }

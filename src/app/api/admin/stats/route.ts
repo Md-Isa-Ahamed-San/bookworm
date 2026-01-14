@@ -3,8 +3,8 @@
 // ==========================================
 
 import { NextResponse, type NextRequest } from "next/server";
-import { db } from "../../../../server/db";
 import { getSession } from "../../../../server/better-auth/server";
+import { db } from "../../../../server/db";
 
 // src/app/api/admin/stats/route.ts
 // GET /api/admin/stats
@@ -122,7 +122,7 @@ export async function GET(request: NextRequest) {
         .slice(0, 10),
     });
   } catch (error) {
-    console.error("GET /api/admin/stats error:", error);
+    //console..error("GET /api/admin/stats error:", error);
     return NextResponse.json(
       { error: "Failed to fetch admin stats" },
       { status: 500 },

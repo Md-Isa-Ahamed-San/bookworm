@@ -29,11 +29,8 @@ export async function GET(request: NextRequest) {
 
     return Response.json(genres);
   } catch (error) {
-    console.error("GET /api/genres error:", error);
-    return Response.json(
-      { error: "Failed to fetch genres" },
-      { status: 500 },
-    );
+    //console..error("GET /api/genres error:", error);
+    return Response.json({ error: "Failed to fetch genres" }, { status: 500 });
   }
 }
 
@@ -57,11 +54,7 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return Response.json({ error: error.errors }, { status: 400 });
     }
-    console.error("POST /api/genres error:", error);
-    return Response.json(
-      { error: "Failed to create genre" },
-      { status: 500 },
-    );
+    //console..error("POST /api/genres error:", error);
+    return Response.json({ error: "Failed to create genre" }, { status: 500 });
   }
 }
-

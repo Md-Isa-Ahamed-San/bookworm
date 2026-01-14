@@ -3,9 +3,9 @@
 // ==========================================
 
 import { NextResponse, type NextRequest } from "next/server";
+import z from "zod";
 import { getSession } from "../../../server/better-auth/server";
 import { db } from "../../../server/db";
-import z from "zod";
 
 // src/app/api/reviews/route.ts
 const createReviewSchema = z.object({
@@ -58,13 +58,10 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.errors }, { status: 400 });
     }
-    console.error("POST /api/reviews error:", error);
+    //console..error("POST /api/reviews error:", error);
     return NextResponse.json(
       { error: "Failed to create review" },
       { status: 500 },
     );
   }
 }
-
-
-

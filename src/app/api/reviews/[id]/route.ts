@@ -1,4 +1,3 @@
-
 // src/app/api/reviews/[id]/route.ts
 
 import type { NextRequest } from "next/server";
@@ -32,10 +31,7 @@ export async function DELETE(
 
     return Response.json({ success: true });
   } catch (error) {
-    console.error("DELETE /api/reviews/[id] error:", error);
-    return Response.json(
-      { error: "Failed to delete review" },
-      { status: 500 },
-    );
+    //console..error("DELETE /api/reviews/[id] error:", error);
+    return Response.json({ error: "Failed to delete review" }, { status: 500 });
   }
 }

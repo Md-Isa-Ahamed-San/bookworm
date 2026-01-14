@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
-import { getSession } from "../../../../../server/better-auth/server";
 import z from "zod";
+import { getSession } from "../../../../../server/better-auth/server";
 import { db } from "../../../../../server/db";
 
 // src/app/api/library/shelves/[id]/route.ts
@@ -45,7 +45,7 @@ export async function PUT(
     if (error instanceof z.ZodError) {
       return Response.json({ error: error.errors }, { status: 400 });
     }
-    console.error("PUT /api/library/shelves/[id] error:", error);
+    //console..error("PUT /api/library/shelves/[id] error:", error);
     return Response.json({ error: "Failed to update shelf" }, { status: 500 });
   }
 }
@@ -74,7 +74,7 @@ export async function DELETE(
 
     return Response.json({ success: true });
   } catch (error) {
-    console.error("DELETE /api/library/shelves/[id] error:", error);
+    //console..error("DELETE /api/library/shelves/[id] error:", error);
     return Response.json(
       { error: "Failed to remove from shelf" },
       { status: 500 },

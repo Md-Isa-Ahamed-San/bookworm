@@ -2,10 +2,10 @@
 // 📚 BOOKS API ROUTES
 // ==========================================
 // src/app/api/books/route.ts
-import { db } from "~/server/db";
-import { z } from "zod";
-import { getSession } from "../../../server/better-auth/server";
 import { NextRequest } from "next/server";
+import { z } from "zod";
+import { db } from "~/server/db";
+import { getSession } from "../../../server/better-auth/server";
 
 const createBookSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("GET /api/books error:", error);
+    //console..error("GET /api/books error:", error);
     return Response.json({ error: "Failed to fetch books" }, { status: 500 });
   }
 }
@@ -131,8 +131,7 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return Response.json({ error: error.errors }, { status: 400 });
     }
-    console.error("POST /api/books error:", error);
+    //console..error("POST /api/books error:", error);
     return Response.json({ error: "Failed to create book" }, { status: 500 });
   }
 }
-

@@ -137,7 +137,7 @@ model UserBook {
   userId    String
   bookId    String
   shelf     ShelfType
-  progress  Int       @default(0) // Percentage (0-100) or pages read
+  progress  Int       @default(0) // pages read
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 

@@ -1,7 +1,7 @@
-import z from "zod";
-import { db } from "../../../../../server/db";
-import { getSession } from "../../../../../server/better-auth/server";
 import type { NextRequest } from "next/server";
+import z from "zod";
+import { getSession } from "../../../../../server/better-auth/server";
+import { db } from "../../../../../server/db";
 
 // src/app/api/users/[id]/role/route.ts
 const updateRoleSchema = z.object({
@@ -49,7 +49,7 @@ export async function PUT(
     if (error instanceof z.ZodError) {
       return Response.json({ error: error.errors }, { status: 400 });
     }
-    console.error("PUT /api/users/[id]/role error:", error);
+    //console..error("PUT /api/users/[id]/role error:", error);
     return Response.json(
       { error: "Failed to update user role" },
       { status: 500 },

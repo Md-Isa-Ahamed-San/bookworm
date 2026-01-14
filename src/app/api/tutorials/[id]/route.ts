@@ -1,8 +1,8 @@
 // src/app/api/tutorials/[id]/route.ts
 
+import type { NextRequest } from "next/server";
 import z from "zod";
 import { getSession } from "../../../../server/better-auth/server";
-import type { NextRequest } from "next/server";
 import { db } from "../../../../server/db";
 
 const createTutorialSchema = z.object({
@@ -37,7 +37,7 @@ export async function GET(
 
     return Response.json(tutorial);
   } catch (error) {
-    console.error("GET /api/tutorials/[id] error:", error);
+    //console..error("GET /api/tutorials/[id] error:", error);
     return Response.json(
       { error: "Failed to fetch tutorial" },
       { status: 500 },
@@ -73,7 +73,7 @@ export async function PUT(
     if (error instanceof z.ZodError) {
       return Response.json({ error: error.errors }, { status: 400 });
     }
-    console.error("PUT /api/tutorials/[id] error:", error);
+    //console..error("PUT /api/tutorials/[id] error:", error);
     return Response.json(
       { error: "Failed to update tutorial" },
       { status: 500 },
@@ -98,7 +98,7 @@ export async function DELETE(
 
     return Response.json({ success: true });
   } catch (error) {
-    console.error("DELETE /api/tutorials/[id] error:", error);
+    //console..error("DELETE /api/tutorials/[id] error:", error);
     return Response.json(
       { error: "Failed to delete tutorial" },
       { status: 500 },

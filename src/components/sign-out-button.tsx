@@ -25,7 +25,7 @@ export function SignOutButton({
       await signOutAction();
     } catch (error) {
       setIsLoading(false);
-      console.error("Sign out failed", error);
+      //console..error("Sign out failed", error);
     }
   };
 

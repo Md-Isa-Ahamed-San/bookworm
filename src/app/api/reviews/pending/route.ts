@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
 
     return Response.json(reviews);
   } catch (error) {
-    console.error("GET /api/reviews/pending error:", error);
+    //console..error("GET /api/reviews/pending error:", error);
     return Response.json(
       { error: "Failed to fetch pending reviews" },
       { status: 500 },

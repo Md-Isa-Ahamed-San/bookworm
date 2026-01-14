@@ -1,9 +1,9 @@
 // src/app/api/books/[id]/route.ts
 
 import { NextResponse, type NextRequest } from "next/server";
-import { db } from "../../../../server/db";
-import { getSession } from "../../../../server/better-auth/server";
 import z from "zod";
+import { getSession } from "../../../../server/better-auth/server";
+import { db } from "../../../../server/db";
 
 const createBookSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -54,7 +54,7 @@ export async function GET(
 
     return NextResponse.json({ ...book, avgRating });
   } catch (error) {
-    console.error("GET /api/books/[id] error:", error);
+    //console..error("GET /api/books/[id] error:", error);
     return NextResponse.json(
       { error: "Failed to fetch book" },
       { status: 500 },
@@ -90,7 +90,7 @@ export async function PUT(
     if (error instanceof z.ZodError) {
       return Response.json({ error: error.errors }, { status: 400 });
     }
-    console.error("PUT /api/books/[id] error:", error);
+    //console..error("PUT /api/books/[id] error:", error);
     return Response.json({ error: "Failed to update book" }, { status: 500 });
   }
 }
@@ -112,7 +112,7 @@ export async function DELETE(
 
     return Response.json({ success: true });
   } catch (error) {
-    console.error("DELETE /api/books/[id] error:", error);
+    //console..error("DELETE /api/books/[id] error:", error);
     return Response.json({ error: "Failed to delete book" }, { status: 500 });
   }
 }

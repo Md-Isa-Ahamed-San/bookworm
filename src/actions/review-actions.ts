@@ -1,10 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 import { db } from "~/server/db";
 import { getSession } from "../server/better-auth/server";
-import { z } from "zod";
-
 
 export async function approveReview(reviewId: string) {
   const session = await getSession();
@@ -60,14 +59,14 @@ const reviewSchema = z.object({
   bookId: z.string(),
   rating: z.number().min(1).max(5),
   text: z.string().min(10, "Review must be at least 10 characters"),
-})
+});
 
 export async function submitReview(input: z.infer<typeof reviewSchema>) {
-  const session = await getSession()
-  if (!session) return { success: false, error: "Unauthorized" }
+  const session = await getSession();
+  if (!session) return { success: false, error: "Unauthorized" };
 
-  const parsed = reviewSchema.safeParse(input)
-  if (!parsed.success) return { success: false, error: "Invalid input" }
+  const parsed = reviewSchema.safeParse(input);
+  if (!parsed.success) return { success: false, error: "Invalid input" };
 
   try {
     // Check if already reviewed
@@ -78,10 +77,10 @@ export async function submitReview(input: z.infer<typeof reviewSchema>) {
           bookId: parsed.data.bookId,
         },
       },
-    })
+    });
 
     if (existing) {
-      return { success: false, error: "You have already reviewed this book" }
+      return { success: false, error: "You have already reviewed this book" };
     }
 
     await db.review.create({
@@ -92,12 +91,12 @@ export async function submitReview(input: z.infer<typeof reviewSchema>) {
         text: parsed.data.text,
         status: "PENDING", // Reviews require moderation
       },
-    })
+    });
 
-    revalidatePath(`/books/${parsed.data.bookId}`)
-    return { success: true }
+    revalidatePath(`/books/${parsed.data.bookId}`);
+    return { success: true };
   } catch (error) {
-    console.error("Review submit error:", error)
-    return { success: false, error: "Failed to submit review" }
+    // //console..error("Review submit error:", error)
+    return { success: false, error: "Failed to submit review" };
   }
 }

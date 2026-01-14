@@ -30,10 +30,7 @@ export async function GET(
 
     return Response.json(reviews);
   } catch (error) {
-    console.error("GET /api/reviews/book/[bookId] error:", error);
-    return Response.json(
-      { error: "Failed to fetch reviews" },
-      { status: 500 },
-    );
+    //console..error("GET /api/reviews/book/[bookId] error:", error);
+    return Response.json({ error: "Failed to fetch reviews" }, { status: 500 });
   }
 }

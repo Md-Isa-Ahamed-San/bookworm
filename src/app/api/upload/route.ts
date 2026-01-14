@@ -1,5 +1,5 @@
-import { getSession } from "../../../server/better-auth/server";
 import { NextResponse, type NextRequest } from "next/server";
+import { getSession } from "../../../server/better-auth/server";
 import { uploadImage } from "../../../server/lib/cloudinary";
 
 // POST /api/upload
@@ -24,10 +24,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ url: imageUrl });
   } catch (error) {
-    console.error("POST /api/upload error:", error);
+    //console..error("POST /api/upload error:", error);
     return NextResponse.json(
       { error: "Failed to upload file" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
